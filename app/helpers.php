@@ -37,3 +37,20 @@ function val($value): string
 	$value = trim((string) $value);
 	return ($value === '' || $value === '0') ? '—' : e($value);
 }
+
+/** Chemin de l'image de fond pour un continent (vide = "study"). */
+function bg_image($continent): string
+{
+	$map = [
+		''               => 'background-study.jpg',
+		'Asia'           => 'background-Asie.jpg',
+		'Africa'         => 'background-Afrique.jpg',
+		'Europe'         => 'background-europe.jpg',
+		'North America'  => 'background-amerique-nord.jpg',
+		'South America'  => 'background-amerique-sud.jpg',
+		'Oceania'        => 'background-oceanie.jpg',
+		'Antarctica'     => 'background-Antarctique.jpg',
+	];
+	$file = isset($map[$continent]) ? $map[$continent] : 'background-study.jpg';
+	return 'assets/bg/' . $file;
+}

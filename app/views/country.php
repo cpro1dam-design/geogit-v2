@@ -21,7 +21,7 @@
 <section class="stats" aria-label="Statistiques clés">
 	<div class="stat">
 		<span class="stat__label">Capitale</span>
-		<span class="stat__value"><?= val($country->Capital) ?></span>
+		<span class="stat__value"><?= val($country->CapitalName) ?></span>
 	</div>
 	<div class="stat">
 		<span class="stat__label">Population</span>

@@ -7,7 +7,9 @@
 	<div class="searchbar">
 		<svg class="searchbar__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 21l-4.35-4.35M11 19a8 8 0 1 1 0-16 8 8 0 0 1 0 16z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
 		<input id="search" type="search" placeholder="Rechercher un pays ou une capitale…"
-			autocomplete="off" aria-label="Rechercher un pays">
+			autocomplete="off" aria-label="Rechercher un pays"
+			role="combobox" aria-expanded="false" aria-controls="suggestions" aria-autocomplete="list">
+		<ul id="suggestions" class="suggest" role="listbox" hidden></ul>
 	</div>
 </section>
 

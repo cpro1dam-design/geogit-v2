@@ -49,15 +49,23 @@ class Database
 	/** Tous les pays (données légères pour la grille + filtrage client). */
 	public static function countries()
 	{
-		$sql = 'SELECT id, Name, Code2, Continent, Capital, Region, Population
-		        FROM country ORDER BY Name';
+		// Capital est un id de ville : on le résout en nom via une jointure.
+		$sql = 'SELECT c.id, c.Name, c.Code2, c.Continent, c.Region, c.Population,
+		               cap.Name AS Capital
+		        FROM country c
+		        LEFT JOIN city cap ON cap.id = c.Capital
+		        ORDER BY c.Name';
 		return self::pdo()->query($sql)->fetchAll();
 	}
 
-	/** Fiche complète d'un pays. */
+	/** Fiche complète d'un pays (avec nom de la capitale résolu). */
 	public static function country($id)
 	{
-		$stmt = self::pdo()->prepare('SELECT * FROM country WHERE id = :id');
+		$sql = 'SELECT c.*, cap.Name AS CapitalName
+		        FROM country c
+		        LEFT JOIN city cap ON cap.id = c.Capital
+		        WHERE c.id = :id';
+		$stmt = self::pdo()->prepare($sql);
 		$stmt->execute([':id' => $id]);
 		$row = $stmt->fetch();
 		return $row ?: null;
@@ -84,5 +92,63 @@ class Database
 		$stmt = self::pdo()->prepare($sql);
 		$stmt->execute([':id' => $countryId]);
 		return $stmt->fetchAll();
+	}
+
+	/* ----------------------- Utilisateurs ----------------------- */
+
+	/** Récupère un utilisateur par son email. */
+	public static function userByEmail($mail)
+	{
+		$stmt = self::pdo()->prepare('SELECT * FROM users WHERE mail = :m');
+		$stmt->execute([':m' => $mail]);
+		$row = $stmt->fetch();
+		return $row ?: null;
+	}
+
+	/** Indique si un email est déjà enregistré. */
+	public static function userExists($mail)
+	{
+		$stmt = self::pdo()->prepare('SELECT COUNT(*) FROM users WHERE mail = :m');
+		$stmt->execute([':m' => $mail]);
+		return (int) $stmt->fetchColumn() > 0;
+	}
+
+	/** Crée un utilisateur (mot de passe déjà haché). */
+	public static function createUser($name, $firstname, $mail, $password, $role = 'student')
+	{
+		$stmt = self::pdo()->prepare(
+			'INSERT INTO users (name, firstname, mail, password, role) VALUES (:n, :f, :m, :p, :r)'
+		);
+		return $stmt->execute([
+			':n' => $name,
+			':f' => $firstname,
+			':m' => $mail,
+			':p' => $password,
+			':r' => $role,
+		]);
+	}
+
+	/** Tous les utilisateurs (espace admin). */
+	public static function allUsers()
+	{
+		return self::pdo()
+			->query('SELECT id, name, firstname, mail, role FROM users ORDER BY role, name')
+			->fetchAll();
+	}
+
+	/** Requêtes enregistrées d'un utilisateur (espace enseignant). */
+	public static function queriesByUser($userId)
+	{
+		$stmt = self::pdo()->prepare('SELECT * FROM query WHERE id_user = :id ORDER BY id DESC');
+		$stmt->execute([':id' => $userId]);
+		return $stmt->fetchAll();
+	}
+
+	/** Requêtes publiques (espace étudiant). */
+	public static function publicQueries()
+	{
+		return self::pdo()
+			->query("SELECT * FROM query WHERE query_statut = 'public' ORDER BY id DESC")
+			->fetchAll();
 	}
 }

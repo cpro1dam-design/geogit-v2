@@ -1,10 +1,41 @@
 <?php
-ini_set('display_errors', 1);
-define('DB_NAME', 'if0_41035004_geoworld');
-define('DB_DSN', 'mysql:host=sql202.infinityfree.com; dbname=' . DB_NAME . '; charset=utf8');
-define('DB_USER', 'if0_41035004');
-define('DB_PASSWORD', 'geoworld589');
-define('DEBUG', false);
+/**
+ * Connexion à la base de données.
+ *
+ * Détection automatique de l'environnement :
+ *   - en local (localhost / 127.0.0.1)  -> MySQL local (root, base geoworld)
+ *   - en ligne                          -> hébergement InfinityFree
+ *
+ * On peut forcer le mode local en définissant la variable
+ * d'environnement GEOWORLD_ENV=local.
+ */
+
+// --- Détection local vs production ---
+$serverName = $_SERVER['SERVER_NAME'] ?? ($_SERVER['HTTP_HOST'] ?? '');
+$serverName = strtolower(explode(':', $serverName)[0]); // retire le port éventuel
+$isLocal = getenv('GEOWORLD_ENV') === 'local'
+        || in_array($serverName, ['localhost', '127.0.0.1', '::1'], true)
+        || in_array($_SERVER['SERVER_ADDR'] ?? '', ['127.0.0.1', '::1'], true);
+
+if ($isLocal) {
+  define('DB_HOST', '127.0.0.1');
+  define('DB_NAME', 'geoworld');
+  define('DB_USER', 'root');
+  define('DB_PASSWORD', '');
+  define('DEBUG', true);
+} else {
+  define('DB_HOST', 'sql202.infinityfree.com');
+  define('DB_NAME', 'if0_41035004_geoworld');
+  define('DB_USER', 'if0_41035004');
+  define('DB_PASSWORD', 'geoworld589');
+  define('DEBUG', false);
+}
+
+define('DB_DSN', 'mysql:host=' . DB_HOST . '; dbname=' . DB_NAME . '; charset=utf8');
+
+if (DEBUG) {
+  ini_set('display_errors', 1);
+}
 
 $dbError = '';
 

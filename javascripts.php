@@ -5,42 +5,35 @@
 
 <script >
     let loader = document.querySelector('.planet');
-    let body = document.querySelector('body');
-    let header = document.querySelector('header');
-   /* 
-    window.addEventListener("unload",function () {console.info(loader);
-    $('.planet').fadeIn("fast");
-    body.classList.toggle('loader');
-    header.classList.toggle('loader');
-      // $(loader).fadeOut("slow");
-   })*/
-// current state
-console.log(document.readyState);
 
-// print state changes
-document.addEventListener('readystatechange', () => console.log(document.readyState));
+    // Retire l'écran de chargement sans attendre TOUTES les images de la page
+    // (sinon, derrière le serveur PHP mono-thread, le loader reste affiché
+    // tant que les ~240 drapeaux ne sont pas tous chargés).
+    function hideLoader() {
+        if (!loader) return;
+        var el = loader;
+        loader = null;
+        if (window.jQuery) {
+            jQuery(el).fadeOut('slow', function () {
+                if (el.parentElement) el.parentElement.removeChild(el);
+            });
+        } else {
+            el.style.transition = 'opacity .5s ease';
+            el.style.opacity = '0';
+            setTimeout(function () {
+                if (el.parentElement) el.parentElement.removeChild(el);
+            }, 500);
+        }
+    }
 
-if (document.readyState == 'loading') {
-  // still loading, wait for the event
-document.addEventListener("DOMContentLoaded",function () {console.info(loader);
-    $('.planet').fadeIn("fast");
-    body.classList.toggle('loader');
-    header.classList.toggle('loader');
-      // $(loader).fadeOut("slow");
-   })
-} else {
-  
-}
-    /*)*/
-   
-
-    window.addEventListener('load',function () {console.log(loader);
-        
-        body.classList.toggle('loader');
-    header.classList.toggle('loader');
-    $(loader).fadeOut("slow");
-        loader.parentElement.removeChild(loader);
-    })
+    // Dès que le DOM est prêt (petit délai pour profiter de l'animation).
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function () { setTimeout(hideLoader, 600); });
+    } else {
+        setTimeout(hideLoader, 600);
+    }
+    // Filet de sécurité : ne jamais bloquer plus de 3 s.
+    setTimeout(hideLoader, 3000);
     
  function deleteme(del_id){
     if (confirm("Do you want to delete ")){ console.info('jhgig');
