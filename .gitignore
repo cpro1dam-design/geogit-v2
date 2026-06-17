@@ -1,0 +1,8 @@
+# IDE
+.idea/
+
+# Extraction temporaire du dump world
+doc/_world_extract/
+
+# Logs / divers
+*.log
