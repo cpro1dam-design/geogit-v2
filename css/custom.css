@@ -1,6 +1,9 @@
 body {
     margin:0;
     padding:0;
+    /* Décale le contenu sous la navbar « fixed-top » : sans cela le
+       titre <h1> de la page passe caché derrière la barre fixe. */
+    padding-top: 70px;
     min-height: 100vh;
     overflow-x: hidden;
 }
