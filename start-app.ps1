@@ -43,14 +43,15 @@ if (-not $mysqlUp) {
     Write-Host "MySQL est deja en ecoute sur ${listenHost}:3306." -ForegroundColor Green
 }
 
-# --- 2. Profil local lu par app/config.php ---
+# --- 2. Profil local (lu par l'app modernisee, deplacee dans ../geoworld-app) ---
 $env:GEOWORLD_ENV   = "local"
 $env:GEOWORLD_DEBUG = if ($Debug) { "1" } else { "0" }
 
 # --- 3. Lancer le serveur PHP integre (racine du projet) ---
 Write-Host ""
 Write-Host "Application d'origine : http://${listenHost}:${Port}/" -ForegroundColor Cyan
-Write-Host "Nouvelle app          : http://${listenHost}:${Port}/app/" -ForegroundColor Cyan
+Write-Host "App modernisee        : depot separe dans ..\geoworld-app" -ForegroundColor DarkCyan
+Write-Host "  (lancer a part : php -S ${listenHost}:8001 -t ..\geoworld-app)" -ForegroundColor DarkGray
 Write-Host "(Ctrl+C pour arreter)" -ForegroundColor DarkGray
 Write-Host ""
 

@@ -10,5 +10,6 @@ doc/_world_extract/
 # Logs / divers
 *.log
 
-# App modernisée — versionnée dans son propre dépôt git (htdocs/app/.git)
+# App modernisée — déplacée dans un dépôt git séparé (../geoworld-app/).
+# On ignore l'éventuel dossier app/ résiduel sous la racine.
 /app/
