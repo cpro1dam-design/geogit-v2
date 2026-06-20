@@ -9,3 +9,6 @@ doc/_world_extract/
 
 # Logs / divers
 *.log
+
+# App modernisée — versionnée dans son propre dépôt git (htdocs/app/.git)
+/app/
